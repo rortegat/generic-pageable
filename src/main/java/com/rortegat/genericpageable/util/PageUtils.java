@@ -14,21 +14,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Generic class to use the pagination functionality provided by Spring JPA without querying databases.
- *
- * @param <T> The object type.
+ * Generic pagination functionality provided by Spring JPA without querying databases.
  */
 @Slf4j
-public class PageUtils<T> {
+public class PageUtils {
+
+    private PageUtils() {
+    }
 
     /**
      * Convert any list of objects to pages.
      *
+     * @param <T>      Presenting the T object to the function
      * @param list     The list of objects.
      * @param pageable Pageable object.
      * @return Page of objects corresponding to specified in the Pageable object.
      */
-    public Page<T> listToPage(List<T> list, Pageable pageable) {
+    public static <T> Page<T> listToPage(List<T> list, Pageable pageable) {
         if (list == null || list.isEmpty())
             return new PageImpl<>(Collections.emptyList(), pageable, 0);
 
@@ -73,7 +75,7 @@ public class PageUtils<T> {
      * @param properties List of attributes whose size corresponds to the number of levels of nested objects.
      * @return Object resulting from the invocation of the getter method of the required attribute.
      */
-    private Object invokeNestedObject(Object object, Class<?> clazz, List<String> properties) {
+    private static Object invokeNestedObject(Object object, Class<?> clazz, List<String> properties) {
         try {
             var propertyDescriptor = new PropertyDescriptor(properties.get(0), clazz);
             var getterMethod = propertyDescriptor.getReadMethod();
@@ -87,9 +89,12 @@ public class PageUtils<T> {
                 //If the attribute is NULL determine its type in order to apply a default ASC sort order (NULL values first)
                 if (invokedObject == null)
                     switch (getterMethod.getReturnType().getSimpleName()) {
-                        case "String": return "";
-                        case "BigDecimal": return BigDecimal.valueOf(0.0);
-                        default: return 0;
+                        case "String":
+                            return "";
+                        case "BigDecimal":
+                            return BigDecimal.valueOf(0.0);
+                        default:
+                            return 0;
                     }
                 return invokedObject instanceof String ? ((String) invokedObject).toLowerCase() : invokedObject;
             }

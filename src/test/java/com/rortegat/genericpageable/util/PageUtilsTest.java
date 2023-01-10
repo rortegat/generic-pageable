@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class PageUtilsTest {
 
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     @Test
     void returnsSortedPage_whenSortListOfObjectsByNestedObjectProperties() {
@@ -39,9 +39,8 @@ class PageUtilsTest {
         log.info("Creating a Pageable object requesting for the first page with the first 10 elements applying the defined sort order");
         var pageable = PageRequest.of(0, 10, sort);
 
-        var pageUtils = new PageUtils<WrapperObject>();
         //when
-        var orderedPage = pageUtils.listToPage(list, pageable);
+        var orderedPage = PageUtils.listToPage(list, pageable);
         log.info("Page retrieved: {}", gson.toJson(orderedPage));
         //then
         assertNull(orderedPage.getContent().get(0).getNestedObject().getNestedNestedObject().getId());
@@ -53,14 +52,13 @@ class PageUtilsTest {
         //given
         var sort = Sort.by("firstName");
         var pageable = PageRequest.of(0, 5, sort);
-        var pageUtil = new PageUtils<NoGettersObject>();
 
         var objectsList = List.of(new NoGettersObject("A", "X"), new NoGettersObject("A", "Y"));
 
         //then
         var exception = assertThrows(RuntimeException.class, () ->
                 //when
-                pageUtil.listToPage(objectsList, pageable));
+                PageUtils.listToPage(objectsList, pageable));
 
         log.error("Thrown exception due properties accessibility: {}", exception.getMessage());
         assertEquals("Object com.rortegat.genericpageable.object.NoGettersObject does not have public access for property firstName or does not exist.", exception.getMessage());

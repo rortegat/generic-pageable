@@ -8,13 +8,7 @@ This Utils class allow us to apply the Pageable attributes to a list of objects.
 
 How to use it...
 
-Create a pageUtil for the type of objects that you want to fetch in Pages 
-
-```java
-PageUtil<MyObjectDto> pageUtil = new PageUtil<>();
-```
-
-The **listToPage** method receives a list of objects and returns the requested Page of object.
+The **listToPage** static method receives a list of objects and returns the requested Page of object.
 
 ```java
 //Pageable object with options defined by the client (page, size and sort)
@@ -24,7 +18,7 @@ Pageable pageable...
 List<MyObjectDto> objectsList = externalApiService.getAllUsersData();
 
 //Applying the pageable options to the object lists
-Page<MyObjectDto> objectsPage = listToPage(objectsList, pageable);
+Page<MyObjectDto> objectsPage = PageUtils.listToPage(objectsList, pageable);
 ```
 
 **NOTE: Check the included unit tests to know more about the uses cases covered by this Utils class.**
